@@ -1,0 +1,64 @@
+---
+import { getCollection, render } from "astro:content";
+import Layout from "../../layouts/Layout.astro";
+import { components } from "../../components/mdx";
+
+// getStaticPaths permite a Astro identificar qué rutas dinámicas existen
+export async function getStaticPaths() {
+  const posts = await getCollection("blog");
+  return posts.map((post) => ({
+    params: { slug: post.id },
+    props: post,
+  }));
+}
+
+// Renderización del contenido
+const post = Astro.props;
+const { Content } = await render(post);
+---
+
+<Layout title={post.data.title}>
+  <article
+    class="bg-neo-bg neo-border p-6 md:p-12 mb-12 relative overflow-hidden"
+  >
+    <div class="border-b-[4px] border-neo-surface pb-6 mb-8">
+      <div class="inline-flex flex-wrap gap-4 mb-4">
+        <time
+          datetime={post.data.pubDate.toISOString()}
+          class="font-mono text-sm bg-neo-primary text-white px-2 py-1 neo-border border-[2px]"
+        >
+          [ {
+            post.data.pubDate.toLocaleDateString("es", {
+              year: "numeric",
+              month: "2-digit",
+              day: "2-digit",
+            })
+          } ]
+        </time>
+      </div>
+
+      <h1
+        class="text-4xl md:text-5xl font-display font-bold uppercase tracking-[-0.02em] leading-none mb-4"
+      >
+        {post.data.title}
+      </h1>
+
+      <p
+        class="text-xl font-medium p-4 bg-neo-container-highest neo-border border-[3px]"
+      >
+        {post.data.description}
+      </p>
+    </div>
+
+    <div class="prose max-w-none prose-neutral">
+      <Content components={components} />
+    </div>
+  </article>
+
+  <a
+    href="/"
+    class="neo-button px-6 py-3 font-bold uppercase block text-center max-w-xs mx-auto"
+  >
+    &lt;&lt; BACK TO INDEX
+  </a>
+</Layout>

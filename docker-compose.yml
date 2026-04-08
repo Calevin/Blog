@@ -1,0 +1,14 @@
+services:
+  blog:
+    build: .
+    ports:
+      - "8080:80"
+    labels:
+      caddy: http://blog.calevin.com
+      caddy.reverse_proxy: "blog:80"
+      caddy.reverse_proxy.header_up: "X-Forwarded-Proto https"
+    restart: always
+
+networks:
+  caddy_net:
+    external: true

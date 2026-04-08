@@ -1,0 +1,45 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-display: 'Space Grotesk', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', ui-monospace, SFMono-Regular, monospace;
+
+  --color-neo-bg: #fbfaee;
+  --color-neo-surface: #1b1c15;
+  --color-neo-primary: #b7102a;
+  --color-neo-secondary: #2a674c;
+  --color-neo-tertiary: #ffb702;
+  --color-neo-container-highest: #e4e3d7;
+  --color-neo-container-lowest: #ffffff;
+}
+
+@layer base {
+  body {
+    @apply bg-[var(--color-neo-bg)] text-[var(--color-neo-surface)] font-sans;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display tracking-[-0.02em];
+  }
+}
+
+@utility neo-border {
+  @apply border-[4px] border-[var(--color-neo-surface)] rounded-none;
+}
+
+@utility neo-shadow {
+  @apply shadow-[4px_4px_0px_0px_var(--color-neo-surface)];
+}
+
+@utility neo-shadow-lg {
+  @apply shadow-[12px_12px_0px_0px_var(--color-neo-surface)];
+}
+
+@utility neo-card {
+  @apply bg-[var(--color-neo-bg)] border-[4px] border-[var(--color-neo-surface)] rounded-none shadow-[4px_4px_0px_0px_var(--color-neo-surface)];
+}
+
+@utility neo-button {
+  @apply bg-[var(--color-neo-primary)] text-white border-[4px] border-[var(--color-neo-surface)] rounded-none shadow-[4px_4px_0px_0px_var(--color-neo-surface)] transition-all duration-100 ease-in-out hover:shadow-[0px_0px_0px_0px_var(--color-neo-surface)] hover:translate-x-[4px] hover:translate-y-[4px];
+}

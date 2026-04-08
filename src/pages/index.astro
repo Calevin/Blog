@@ -1,0 +1,57 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { getCollection } from "astro:content";
+
+const posts = (await getCollection("blog")).sort(
+  (a, b) =>
+    new Date(b.data.pubDate).valueOf() - new Date(a.data.pubDate).valueOf(),
+);
+---
+
+<Layout title="Technical Manual | Blog">
+  <section class="mb-12 border-b-[4px] border-neo-surface pb-12">
+    <h1
+      class="text-4xl md:text-6xl font-display uppercase tracking-[-0.02em] font-bold mb-4 px-2 bg-neo-secondary text-white inline-block neo-border border-[4px]"
+    >
+      INDEX 01
+    </h1>
+    <p
+      class="text-xl max-w-2xl mt-4 font-medium p-4 bg-neo-container-highest neo-border neo-shadow"
+    >
+      A collection of technical notes, operational theories, and software
+      engineering manuals. Built under the principles of Editorial
+      Neo-Brutalism.
+    </p>
+  </section>
+
+  <ul class="grid gap-8">
+    {
+      posts.map((post) => (
+        <li>
+          <a
+            href={`/blog/${post.id}/`}
+            class="block neo-card p-6 decoration-transparent group hover:bg-neo-secondary hover:text-white transition-colors duration-150 relative"
+          >
+            <div class="absolute inset-0 border-[4px] border-neo-surface bg-neo-surface opacity-0 group-hover:opacity-10 translate-x-[6px] translate-y-[6px] transition-all -z-10" />
+            <h2 class="text-2xl font-bold font-display uppercase tracking-[-0.02em] mb-2">
+              {post.data.title}
+            </h2>
+            <p class="text-neo-surface group-hover:text-white mb-4 line-clamp-2">
+              {post.data.description}
+            </p>
+            <time
+              datetime={post.data.pubDate.toISOString()}
+              class="font-mono text-xs bg-white text-neo-surface px-2 py-1 neo-border border-[2px]"
+            >
+              {post.data.pubDate.toLocaleDateString("es", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}
+            </time>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</Layout>
