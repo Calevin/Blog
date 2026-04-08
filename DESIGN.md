@@ -1,7 +1,7 @@
 # Design System: Editorial Neo-Brutalism
 
 ## 1. Overview & Creative North Star
-The Creative North Star for this system is **"The Technical Manual."**
+The Creative North Star for this system is **"The Personal Manual."**
 
 Inspired by the Ron Cobb "Semiotic Standard" from *Alien*, this system transforms a software development blog into an authoritative, high-output industrial archive. We are moving away from the "softness" of modern SaaS design. Instead, we embrace a high-contrast, high-impact aesthetic that uses raw geometry and aggressive structural lines to signal technical precision.
 
