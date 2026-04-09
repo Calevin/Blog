@@ -7,14 +7,15 @@ section: '01_INPUT'
 
 ## Introducción
 
- Inicialmente fue creado con enfoque exclusivo en webs de contenidos como: sitios de marketing, publicitarios, documentaciones, blogs, portafolios, e-commerce, etc.
- Con el tiempo fue cambiando y ahora permite la creación de sitios web, aplicaciones web y demas.
+Creado inicialmente con un enfoque exclusivo en webs de contenidos como: sitios de marketing, publicitarios, documentaciones, blogs, portafolios, e-commerce, etc.
+ Con el tiempo fue cambiando y ahora permite la creación de sitios web, aplicaciones web y demás.
 
 ## ¿Qué es Astro.js?
-A diferencia de la mayoria de los frameworks JavaScript, Astro busca enviar **menos** JavaScript al navegador por defecto. Internamente Astro usa Vite para compilar y optmizar los archivos finales del sitio web.
+A diferencia de la mayoría de los frameworks JavaScript, Astro busca enviar **menos** JavaScript al navegador por defecto.
+Internamente, Astro usa Vite para compilar y optmizar los archivos finales del sitio web.
 
 ## Principios y características clave de Astro.js
-* Server-first: El HTML se procesa del lado del servidor
+* Server-first: El HTML se procesa del lado del servidor.
 * Sistema basado en componentes.
 * Cero JavaScript por defecto: Garantiza un mejor rendimiento.
 * Soporte para múltiples frameworks: Permite usar React, Vue, Svelte, Solid y otros.
@@ -24,7 +25,7 @@ A diferencia de la mayoria de los frameworks JavaScript, Astro busca enviar **me
 * Soporta un modo SSG (Static Site Generation) y un modo SSR (Server Side Rendering) 
 * Server Islands: Permite que solo determinados componentes de la web sean dinámicos.
 
-## Estructura de capertas en un proyecto Astro
+## Estructura de carpetas en un proyecto Astro
 
 ```
 my-astro-project/
@@ -73,10 +74,10 @@ Se pueden enlazar páginas utilizando su ruta relativa. Siguiendo el ejemplo ant
 Los formatos soportados para crear páginas son: .astro, .html, .md, .mdx, .js y .ts.
 
 ## Rutas dinamicas
-Para crear rutas dinamicas en Astro primero hay que crear un archivo cuyo nombre este entre corchetes por ejemplo '[slug].astro', de esta manera "slug" pasa a ser un parámetro
-, en las rutas se reemplazara "[slug]" por el nombre de cada archivo que se encuentre en la carpeta "pages" dentro de la carpeta "src", o podemos usar 'getCollection' para obtener los archivos de una carpeta especifica
+Para crear rutas dinámicas en Astro primero hay que crear un archivo cuyo nombre este entre corchetes por ejemplo '[slug].astro', de esta manera "slug" pasa a ser un parámetro
+, en las rutas se reemplazara "[slug]" por el nombre de cada archivo que se encuentre en la carpeta "pages" dentro de la carpeta "src", o podemos usar 'getCollection' para obtener los archivos de una carpeta específica
 , por ejemplo "src/content/blog".
-Para definir las rutas dinamicas se debe usar la función getStaticPaths() que devuelve un array de objetos con la propiedad params que contiene el valor del parámetro.
+Para definir las rutas dinámicas se debe usar la función getStaticPaths() que devuelve un array de objetos con la propiedad params que contiene el valor del parámetro.
 Por ejemplo: dentro del archivo '[slug].astro' se puede definir las rutas dinamicas de la siguiente manera:
 ```jsx
 ---
@@ -103,7 +104,7 @@ Si tenemos los archivos "src/content/blog/first-post.mdx" y "src/content/blog/se
 > **Importante**: Estas páginas se generan en tiempo de compilación (al ejecutar "npm run build").
 
 ## Componentes de Astro
-En Astro los componentes tienen la extensión ".astro" y se ubican en la carpeta "src/components". Tambien pueden ser componentes de otro framework, por ejemplo React, en cuyo caso tendran su correspondiente extension ".jsx".
+En Astro los componentes tienen la extensión ".astro" y se ubican en la carpeta "src/components". También pueden ser componentes de otro framework, por ejemplo React, en cuyo caso tendrán su correspondiente extensión ".jsx".
 > Es Astro lo normal es usar "Pascal Case" para los componentes, por ejemplo ProductCard.astro
 
 ## Ejemplo de componente 
@@ -202,11 +203,11 @@ import Title from "./Title.Astro";
 	</Title>
 	<!-- More content -->
 ```
-De esta forma, el icono se renderizara en el slot nombrado "icon" y el texto, en el slot nombrado "text"
+De esta forma, el icono se renderizará en el slot nombrado "icon" y el texto, en el slot nombrado "text"
 
 ## Layouts de Astro
 Los layouts son componentes de Astro que se utilizan para crear plantillas reutilizables en diferentes páginas.
-Los layouts se usan para encapsular la estructura de una pagina, mientras que los componentes son usados para encapsular partes reutilizables del sitio.
+Los layouts se usan para encapsular la estructura de una página, mientras que los componentes son usados para encapsular partes reutilizables del sitio.
 
 ## Ejemplo de Layout
 Archivo: src/layouts/Layout.astro
