@@ -1,6 +1,7 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 import { getCollection } from "astro:content";
+import FormattedDate from "../../components/FormattedDate.astro";
 
 export async function getStaticPaths() {
   const allPosts = await getCollection("blog");
@@ -86,16 +87,10 @@ const { sectionConfig, posts } = Astro.props;
             <p class="text-neo-surface group-hover:text-white mb-4 line-clamp-2">
               {post.data.description}
             </p>
-            <time
-              datetime={post.data.pubDate.toISOString()}
+            <FormattedDate 
+              date={post.data.pubDate} 
               class="font-mono text-xs bg-white text-neo-surface px-2 py-1 neo-border border-[2px]"
-            >
-              {post.data.pubDate.toLocaleDateString("es", {
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-              })}
-            </time>
+            />
           </a>
         </li>
       ))}

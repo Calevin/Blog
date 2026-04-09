@@ -2,6 +2,7 @@
 import { getCollection, render } from "astro:content";
 import Layout from "../../layouts/Layout.astro";
 import { components } from "../../components/mdx";
+import FormattedDate from "../../components/FormattedDate.astro";
 
 // getStaticPaths permite a Astro identificar qué rutas dinámicas existen
 export async function getStaticPaths() {
@@ -23,18 +24,11 @@ const { Content } = await render(post);
   >
     <div class="border-b-[4px] border-neo-surface pb-6 mb-8">
       <div class="inline-flex flex-wrap gap-4 mb-4">
-        <time
-          datetime={post.data.pubDate.toISOString()}
-          class="font-mono text-sm bg-neo-primary text-white px-2 py-1 neo-border border-[2px]"
-        >
-          [ {
-            post.data.pubDate.toLocaleDateString("es", {
-              year: "numeric",
-              month: "2-digit",
-              day: "2-digit",
-            })
-          } ]
-        </time>
+          [ <FormattedDate 
+            date={post.data.pubDate} 
+            style="short"
+            class="font-mono text-sm bg-neo-primary text-white px-2 py-1 neo-border border-[2px]"
+          /> ]
       </div>
 
       <h1
