@@ -1,0 +1,104 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import { getCollection } from "astro:content";
+
+export async function getStaticPaths() {
+  const allPosts = await getCollection("blog");
+  
+  const sections = [
+    { 
+      id: "01_input", 
+      title: "01_INPUT", 
+      desc: "Contenido que consumo: videos en YouTube, artículos, notas de libros y recursos externos que configuran mi base de conocimiento.",
+      badgeColor: "bg-neo-secondary"
+    },
+    { 
+      id: "02_output", 
+      title: "02_OUTPUT", 
+      desc: "Contenido que produzco: tutoriales técnicos, reflexiones, ensayos y proyectos exportados.",
+      badgeColor: "bg-neo-primary"
+    },
+    { 
+      id: "03_my_server", 
+      title: "03_MY_SERVER", 
+      desc: "Registro e infraestructura del servidor: configuraciones de Ubuntu Server, Caddy, despliegues y contenedores.",
+      badgeColor: "bg-[#448064]"
+    },
+    { 
+      id: "04_my_setup", 
+      title: "04_MY_SETUP", 
+      desc: "Mi entorno de trabajo diario: dotfiles, Arch Linux, Hyprland, configuración de ZSH y herramientas de terminal.",
+      badgeColor: "bg-[#ffb702]"
+    },
+    { 
+      id: "05_ia", 
+      title: "05_IA", 
+      desc: "Bitácora de Inteligencia Artificial: Modelos, herramientas, técnicas, prompting y mis experiencias con ellas.",
+      badgeColor: "bg-neo-surface"
+    },
+  ];
+
+  return sections.map((sectionConfig) => {
+    const sectionPosts = allPosts
+      .filter((post) => post.data.section === sectionConfig.title)
+      .sort((a, b) => new Date(b.data.pubDate).valueOf() - new Date(a.data.pubDate).valueOf());
+    
+    return {
+      params: { section: sectionConfig.id },
+      props: { sectionConfig, posts: sectionPosts }
+    };
+  });
+}
+
+const { sectionConfig, posts } = Astro.props;
+---
+
+<Layout title={`Personal Manual | ${sectionConfig.title}`}>
+  <section class="mb-12 border-b-[4px] border-neo-surface pb-12">
+    <h1
+      class={`text-4xl md:text-6xl font-display uppercase tracking-[-0.02em] font-bold mb-4 px-2 ${sectionConfig.badgeColor} ${sectionConfig.badgeColor === 'bg-[#ffb702]' ? 'text-neo-surface' : 'text-white'} inline-block neo-border border-[4px]`}
+    >
+      {sectionConfig.title}
+    </h1>
+    <p
+      class="text-xl max-w-2xl mt-4 font-medium p-4 bg-neo-container-highest neo-border neo-shadow"
+    >
+      {sectionConfig.desc}
+    </p>
+  </section>
+
+  {posts.length === 0 ? (
+    <div class="p-8 border-[4px] border-neo-surface bg-neo-container-highest font-mono text-sm text-center">
+      > NO_LOGS_FOUND_IN_THIS_SECTION
+    </div>
+  ) : (
+    <ul class="grid gap-8">
+      {posts.map((post) => (
+        <li>
+          <a
+            href={`/blog/${post.id}/`}
+            class="block neo-card p-6 decoration-transparent group hover:bg-neo-secondary hover:text-white transition-colors duration-150 relative"
+          >
+            <div class="absolute inset-0 border-[4px] border-neo-surface bg-neo-surface opacity-0 group-hover:opacity-10 translate-x-[6px] translate-y-[6px] transition-all -z-10" />
+            <h2 class="text-2xl font-bold font-display uppercase tracking-[-0.02em] mb-2">
+              {post.data.title}
+            </h2>
+            <p class="text-neo-surface group-hover:text-white mb-4 line-clamp-2">
+              {post.data.description}
+            </p>
+            <time
+              datetime={post.data.pubDate.toISOString()}
+              class="font-mono text-xs bg-white text-neo-surface px-2 py-1 neo-border border-[2px]"
+            >
+              {post.data.pubDate.toLocaleDateString("es", {
+                year: "numeric",
+                month: "long",
+                day: "numeric",
+              })}
+            </time>
+          </a>
+        </li>
+      ))}
+    </ul>
+  )}
+</Layout>

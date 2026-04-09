@@ -8,6 +8,13 @@ const blog = defineCollection({
     description: z.string(),
     pubDate: z.coerce.date(),
     updatedDate: z.coerce.date().optional(),
+    section: z.enum([
+      "01_INPUT",
+      "02_OUTPUT",
+      "03_MY_SERVER",
+      "04_MY_SETUP",
+      "05_IA",
+    ]),
   }),
 });
 
