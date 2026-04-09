@@ -1,0 +1,73 @@
+---
+title: 'Sobre mi servidor'
+description: 'En este post hablo del humilde servidor que aloja tanto este blog como otros proyectos personales y algunos servicios self-hosted seguramente abandonados'
+pubDate: '2026-04-09'
+section: '03_MY_SERVER'
+---
+
+## Introducción
+
+En un rincon de mi casa, sobre una caja de Xbox, en un mueble que tiene consolas viejas (y amadas) y juegos de Zelda, se encuentra mi servidor casero.
+
+## El Hardware y su origen
+Es una notebook vieja, comprada de segunda mano via Facebook Marketplace, para muchos "el Marketplace" es un círculo del infierno que Dante se olvidó de describir.
+El tipo que la vendió tenía varios modelos, no habrá salido más de 30 o 40 dólares de su tiempo.
+No tiene batería, se usa directamente enchufada, no tiene las tapas de abajo, por lo tanto, cuando la agarras a veces le moves el disco rígido, milagrosamente nunca se desconectó.
+
+Specs:
+* 8 GB de RAM: Hoy por hoy esa RAM sale un PBI y al mismo tiempo no me aguantaría la cantidad de pestañas que abro en chrome.
+* i3-4005U: 4ª Generación, la generación que normalmente arruina el negocio familiar.
+* Disco de 100Gb: Es un SSD no recuerdo bien como paso, pero creo que la publicación decía un disco mayor, el tipo me dijo que me daba un disco con menos espacio, pero SSD, me sirve.
+
+## El Software y su destino
+Al comprarla le instale Ubuntu Server en su última versión LTS, use Ubuntu muchos años, le tengo cariño. Después le instale docker y trate de tener el sistema lo más limpio posible, lo que no evito que le instale ZSH y le configure algunas cosas que uso en mi día a día e iba a extrañar en el server como zoxide.
+
+La idea era correr en el server tanto proyectos personales con fines educativos tipo alguna API para probrar versiones de java, algún proyecto en un lenguaje que no conozco como ruby o probar el nuevo framework JS que va a morir en dos meses.
+
+También quería correr servicios self-hosted, totalmente influenciado por Lorenzo de [atareao.es](https://atareao.es/), es un tipazo Lorenzo realmente lo debo leer desde hace mucho,
+lo digo porque recuerdo leerlo en mi primer trabajo en sistemas y eso fue hace 15 años.
+
+
+Quería lo típico: "tu propio google fotos", etc. Hay alternativas a servicios privados que está realmente bueno tener self-hosted, poder compartir con tu familia y demás, como el google fotos mencionado,
+pero también hay otros proyectos que son totalmente originales y ciertamente interesantes, espero poder hablar de eso en posts futuros.
+
+El servidor tiene unos años corriendo y aún no lo exprimí tanto, espero cambiar eso este año. Por ahora solo tengo:
+
+* Caddy: Es el proxy reverse, mas abajo hablo de el.
+* Portainer: Monitoreo los distintos contenedores/servicios que corren en el servidor.
+* Immich: Efectivamente, "mi propio google fotos", lo comparto con mi familia, pero (dios!) todavía tengo muchísimas fotos por subir.
+* Hodor: Es una API Java que sirve como Identity Provider/Servicio de Autenticación. **Proyecto personal**
+* Este Blog: Hecho con Astro y con amor. **Proyecto personal**
+* ~~Bookstack~~: Quería una wiki personal, no me gusto, preferí crear este blog que servirá también de wiki personal.
+
+> Nota: Iba a decir que para tachar en lugar del clásico ```--``` de markdown en MDX se usa ```~~```, pero iba a mentir como si fuera IA,
+me acabo de fijar y en markdown también es ```~~``` lo que me hace pensar que rayita-rayita es en WhatsApp, totalmente gaga lo mio.
+
+## Caddy, el proxy reverse con mejor mascota ever
+Hablemos de Caddy, es un proxy reverse escrito en Go, es open source y tiene una licencia copada.
+En mi servidor se encarga de recibir todas las peticiones que vienen de internet y las redirige al servicio correspondiente.
+Bueno todo proxy reverse se encarga de eso, pero por ahí alguien no lo sabía.
+
+Ponele que le pegas a la url de este blog, eso llega a mi server, via un tunnel de Cloudflare (ya hablaré de eso), Caddy lo recibe y decide a que container que tengo corriendo en el servidor redirigir el request, en este caso a un container con Nginx que tiene los archivos estaticos del blog.
+
+Que queres acceder a promiedos.calevin.com bueno quizas algún día te lleve a un clon de Promiedos porque supo ser la mejor web de la argentina y hoy es bastante verga.
+
+Voy a hacer un post exclusivo de como uso Caddy.
+
+## Cloudflare Tunnel, el caño a Yepes de la web
+Según Google "Cloudflare Tunnel es una herramienta gratuita que permite exponer servicios locales (servidores web, Docker, SSH) a Internet de forma segura sin abrir puertos en el router o configurar firewalls".
+
+En algún momento en su lugar tenía No-Ip, no fue muy difícil de usar la verdad, pero en ese caso efectivamente tenía que toquetear cosas del router y la verdad, no me gustaba,
+no quiero quedarme sin internet por mandarme alguna, laburo desde casa y mi novia labura desde casa, además quiero seguir entrando a promiedos a putear porque ahora es una verga.
+
+Además, con No-ip tenía que entrar todos los meses a confirmar que iba a seguir usando un dominio bastante feo: "calevin.sytes.net".
+
+Por otro lado, no sé bien si es por haber usado No-Ip junto a uno de sus dominios gratuitos, pero el servidor estaba siendo atacado todo el tiempo (desde el momento cero) por bots que probaban todas las url típicas de servicios con sus correspondientes usuarios y password por defecto, una mugre eran los logs.
+
+En fin no recuerdo como me entere de la existencia de Cloudflare Tunnel y opte por ese servicio, me gusto tanto que les pague a ellos el dominio que uso para todo "calevin.com", la verdad sin quejas, excelente servicio, excelente documentación, etc.
+Además cuando se cae Cloudflare se cae media internet y eso incluye tus servicios, te sentís en primer mundo(?).
+
+Voy a hacer un post exclusivo de como uso Cloudflare (o lo voy a contar en el post de Caddy).
+
+> Nota: Tanto este como todos los posts de este blog están dirigidos a mi yo del futuro con Alzheimer, no esperen guías reales, son más "ayudamemoria", palabra que por cierto amo porque de pibe se la escuchaba a mis viejos y me daba gracia,
+ jaja que boludo por ahí tendría que ser el nombre del blog.
