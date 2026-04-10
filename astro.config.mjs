@@ -17,7 +17,8 @@ export default defineConfig({
 
   markdown: {
     shikiConfig: {
-      theme: 'plastic'
+      theme: 'plastic',
+      wrap: true, // Set to true to wrap code
     }
   }
 });
