@@ -1,0 +1,186 @@
+---
+title: 'Configuraciones en Ubuntu Server'
+description: 'Este request viajo por un Cloudflare Tunnel que lo llevo a un Caddy-Docker-Proxy para terminar en un container que aloja este blog'
+pubDate: '2026-04-09 16:00'
+section: '03_MY_SERVER'
+---
+
+## Introducción
+En este post voy a anotar que cosas tengo corriendo en el servidor para que este blog y otras maravillas(?) estén disponible sobre el éter mágico de la internet...
+
+## Cloudflare Tunnel
+Como ya hable previamente en el post ["Sobre mi servidor"](/blog/servidor-01) Cloudflare Tunnel es una herramienta que permite exponer servicios locales (que corren en tu computadora o servidor privado) a internet de forma segura,
+sin necesidad de abrir puertos en tu router ni tener una IP pública.
+
+De esta manera Cloudflare actúa como intermediario, el tráfico de los usuarios llega a Cloudflare, que lo reenvía por ese túnel hasta mi servidor.
+
+Ventajas clave:
+
+* Sin IP pública ni puertos abiertos — tu servidor queda completamente oculto
+* HTTPS automático — Cloudflare pone el certificado SSL
+* Protección DDoS incluida (hereda toda la red de Cloudflare)
+* Gratuito en su tier básico - es el que uso, decidí pagarles a ellos por el dominio como forma de agradecimiento
+
+## ¿Cómo se usa en la práctica?
+Se instala un daemon llamado ```cloudflared``` en tu máquina, en mi caso usando Ubuntu Sever primero añadi la clave GPG y el repositorio de Cloudflare
+```
+echo "deb [signed-by=/usr/share/keyrings/cloudflare-main.gpg] https://pkg.cloudflare.com/cloudflared $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/cloudflared.list
+```
+Se instala como un paquete normal:
+```
+sudo apt install cloudflared
+```
+Ya podemos hacer uso de los comandos:
+```
+# Autenticarse
+cloudflared tunnel login
+
+# Crear el túnel
+cloudflared tunnel create server-tunel
+```
+
+Al crear un tunnel se genera un ID para el mismo, y también se genera un archivo en ```/root/.cloudflared/<ID TUNNEL>.json```,
+copie dicho archivo a ```/etc/cloudflared/``` y ya podia usarlo para apuntar dominios:
+
+```
+cloudflared tunnel route dns server-tunel app.example.com
+```
+
+De esta manera ahora app.example.com apunta al tunnel que apunta a esta máquina.
+
+> El túnel debe correrse con ```cloudflared tunnel run mi-tunel``` en mi caso es un servicio de ubuntu ```systemctl start cloudflared```
+
+## Caddy-Docker-Proxy
+["lucaslorentz/caddy-docker-proxy"](https://github.com/lucaslorentz/caddy-docker-proxy) es un plugin para Caddy que te permite usar Caddy como reverse proxy para tus contenedores Docker,
+configurándolo directamente mediante labels de Docker en lugar de editar archivos de configuración manualmente.
+
+## ¿Qué problema resuelve?
+Cuando tenés múltiples servicios corriendo en Docker, normalmente necesitás un reverse proxy que enrute el tráfico hacia cada contenedor según el dominio o path.
+Herramientas como Traefik hacen esto leyendo labels de Docker. Este plugin hace exactamente lo mismo, pero usando Caddy como motor.
+
+## ¿Cómo funciona?
+El plugin escanea los metadatos de Docker buscando labels que indiquen que un servicio o contenedor debe ser servido por Caddy. Luego genera en memoria un Caddyfile con las entradas de cada servicio, apuntando a cada contenedor por su nombre DNS o IP.
+Cada vez que un objeto de Docker cambia, el plugin actualiza el Caddyfile y le indica a Caddy que recargue la configuración, con zero-downtime.
+
+## Mi Docker Compose de Caddy-Docker-Proxy
+```yml
+version: '3.8'
+
+services:
+  caddy:
+    image: lucaslorentz/caddy-docker-proxy:ci-alpine
+    container_name: caddy_reverse_proxy
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:80:80"
+      - "127.0.0.1:443:443"
+      - "127.0.0.1:443:443/udp"
+    environment:
+      - CADDY_INGRESS_NETWORKS=caddy_net
+      - TZ=America/Argentina/Buenos_Aires
+    networks:
+      - caddy_net
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - caddy_data:/data
+
+networks:
+  caddy_net:
+    external: true
+
+volumes:
+  caddy_data: {}
+```
+
+## Paso a paso para agregar un nuevo servicio
+1. En el docker compose del servicio hay que agregar los labels caddy-reverse-proxy:
+```yml
+version: '3.8'
+
+services:
+  new_service:
+    #...
+    labels:
+      caddy: http://new_service.example.com
+      caddy.reverse_proxy: "new_service:80"
+      caddy.reverse_proxy.header_up: "X-Forwarded-Proto https"
+```
+
+Además, debe compartir la network de caddy
+```yml
+networks:
+  caddy_net:
+    external: true
+```
+En mi caso la habia creado previamente al contenedor de caddy-reverse-proxy con:
+```
+docker network create caddy_net
+```
+
+2. Agregar el nuevo DNS al Tunnel de Cloudflare
+
+Registro DNS público (que el dominio apunte al túnel)
+```
+cloudflared tunnel route dns example-server-tunnel new_service.example.com
+```
+
+De esta manera se crea un registro DNS tipo CNAME
+En la zona DNS de example.com (que debe estar gestionada por Cloudflare), se crea automáticamente un registro:
+```
+app.example.com  →  CNAME  →  <UUID-del-tunel>.cfargotunnel.com
+```
+Este dominio cfargotunnel.com es la infraestructura interna de Cloudflare que sabe cómo llegar a tu túnel.
+
+El flujo es
+```
+Usuario
+  │
+  ▼
+app.example.com
+  │  (DNS resuelve a Cloudflare, no a tu IP)
+  ▼
+Red de Cloudflare
+  │  (reenvía por el túnel establecido por cloudflared)
+  ▼
+Tu servidor local
+```
+
+3. Actualizar el archivo config de Cloudflare
+
+Ruteo interno (a qué puerto local va el tráfico)
+```yml
+# /etc/cloudflared/config.yml
+
+# El UUID del túnel
+tunnel: xxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+# Ruta al archivo de credenciales del túnel
+credentials-file: /etc/cloudflared/xxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx.json
+
+# Reglas de entrada: cómo se enruta el tráfico
+# El 'service' apunta a donde Caddy está escuchando localmente (HTTP).
+ingress:
+  - hostname: service_one.example.com
+    service: http://localhost:80
+  - hostname: service_two.example.com
+    service: http://localhost:80
+  - hostname: new_service.example.com # SE AGREGA URL DE NUEVO SERVICIO
+    service: http://localhost:80
+
+  # Esto devuelve un error 404 para cualquier tráfico dirigido al túnel
+  # que no coincida con un hostname configurado arriba.
+  - service: http_status:404
+```
+
+Hay que reiniciar el servicio para que tome el cambio
+```
+sudo systemctl restart cloudflared
+```
+Entonces ```cloudflared``` vuelve a leer el config.yml y empieza a rutear tráfico hacia ```new_service.example.com```,
+en mi caso todos los request son dirigidos a ```http://localhost:80``` o sea a **caddy-reverse-proxy**.
+
+## Final
+Hecho esto ya tengo un nuevo subdominio registrado que apunta a su correspondiente container docker.
+
+> **IMPORTANTE** Los dns se pueden configurar desde el dashboard web de Cloudflare,
+pero al momento de modificar las configuraciones desde la web esta pasa a ser una configuración remota y cualquier cambio
+hecho via línea de comandos desde el servidor es ignorado, la configuración remota pasa a tener mayor prioridad.
