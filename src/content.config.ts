@@ -3,11 +3,11 @@ import { glob } from 'astro/loaders';
 
 const dateSchema = z.string().or(z.date()).transform((val) => {
   if (val instanceof Date) return val;
-  // Handle DD-MM-YYYY or DD/MM/YYYY
-  const ddmmyyyy = /^(\d{1,2})[-/](\d{1,2})[-/](\d{4})$/.exec(val);
-  if (ddmmyyyy) {
-    const [_, day, month, year] = ddmmyyyy;
-    return new Date(`${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`);
+  // Handle DD-MM-YYYY or DD/MM/YYYY with optional HH:mm
+  const match = /^(\d{1,2})[-/](\d{1,2})[-/](\d{4})(?:\s+(\d{1,2}):(\d{2}))?$/.exec(val);
+  if (match) {
+    const [_, day, month, year, hour = "00", minute = "00"] = match;
+    return new Date(`${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}T${hour.padStart(2, '0')}:${minute.padStart(2, '0')}:00`);
   }
   return new Date(val);
 });

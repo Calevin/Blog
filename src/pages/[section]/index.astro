@@ -42,7 +42,11 @@ export async function getStaticPaths() {
   return sections.map((sectionConfig) => {
     const sectionPosts = allPosts
       .filter((post) => post.data.section === sectionConfig.title)
-      .sort((a, b) => new Date(b.data.pubDate).valueOf() - new Date(a.data.pubDate).valueOf());
+      .sort((a, b) => {
+        const dateDiff = b.data.pubDate.valueOf() - a.data.pubDate.valueOf();
+        if (dateDiff !== 0) return dateDiff;
+        return b.id.localeCompare(a.id);
+      });
     
     return {
       params: { section: sectionConfig.id },
