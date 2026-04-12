@@ -1,6 +1,13 @@
 ---
-const props = Astro.props;
+const { href, ...props } = Astro.props;
+const isExternal = href?.toString().startsWith('http');
 ---
-<a class="text-neo-primary font-bold underline decoration-[3px] underline-offset-4 hover:bg-neo-primary hover:text-white transition-colors" {...props}>
+<a 
+  href={href} 
+  class="text-neo-primary font-bold underline decoration-[3px] underline-offset-4 hover:bg-neo-primary hover:text-white transition-colors" 
+  target={isExternal ? "_blank" : undefined}
+  rel={isExternal ? "noopener noreferrer" : undefined}
+  {...props}
+>
   <slot />
 </a>
