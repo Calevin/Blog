@@ -25,3 +25,4 @@
 
 ## 5. Decisiones Técnicas Relevantes (Histórico Reciente)
 - *(Vacío inicialmente — Formato requerido: `[D-XX] Decisión tomada -> Alternativa descartada -> Motivo`)*
+- **[2026-11-12] [Restricciones Técnicas y Trampas Conocidas (Gotchas)]** [NixOS/Node] Node.js y npm no residen en el PATH global del sistema. La ejecución de comandos locales requiere entorno Nix (nix-shell o flake/direnv).
