@@ -1,0 +1,10 @@
+{
+  "tasks": {
+    "001_entorno_local_verificacion": {
+      "spec_hash": "9bdc31d3a3d6900e767f20a404667ccdd195153aaa944fd6afd40250d5f1a630",
+      "verifier_hash": "bb8355b31004abda9b678381d98bfd7f19df7a83ac1d44f5a47ad65f6c6f9939",
+      "verified": true,
+      "commit_hash": "929ba43"
+    }
+  }
+}

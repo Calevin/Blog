@@ -26,3 +26,5 @@
 ## 5. Decisiones Técnicas Relevantes (Histórico Reciente)
 - *(Vacío inicialmente — Formato requerido: `[D-XX] Decisión tomada -> Alternativa descartada -> Motivo`)*
 - **[2026-11-12] [Restricciones Técnicas y Trampas Conocidas (Gotchas)]** [NixOS/Node] Node.js y npm no residen en el PATH global del sistema. La ejecución de comandos locales requiere entorno Nix (nix-shell o flake/direnv).
+- **[2026-11-12] [Decisiones Técnicas Relevantes (Histórico Reciente)]** [D-01] Entorno Nix Flake + direnv adoptado para resolver herméticamente Node.js 22 y scripts deterministas (check, typecheck, build, test) en NixOS.
+- **[2026-11-12] [Restricciones Técnicas y Trampas Conocidas (Gotchas)]** [TypeScript/Astro] Imports de .astro en archivos .ts requieren declare module '*.astro' en src/env.d.ts y ejecucion previa de astro sync para tipos de colecciones.
