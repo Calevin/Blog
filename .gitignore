@@ -22,3 +22,6 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+.seb/bin/
+.seb/seb-audit.db*
+.seb/ACTIVE_ROLE
